@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TODO Zen</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/icon.svg">
+  <meta name="theme-color" content="#244B55" />
+  <script src="js/script.js" defer></script>
+</head>
+
+<body>
+  <div id="app">
+    <header class="app-header">
+      <div class="container header-container">
+        <button id="toggle-sidebar-btn" class="button icon-button" title="Abrir Menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <div class="logo-container">
+          <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          <span class="logo-text">TODO Zen</span>
+        </div>
+        <div class="search-container">
+          <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input type="text" id="search-input" placeholder="Pesquisar tarefas...">
+        </div>
+        <div class="actions-container">
+          <button id="toggle-dark-mode-btn" class="button icon-button" title="Alternar Modo Escuro/Claro">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="feather feather-moon dark-icon">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="feather feather-sun light-icon">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+          </button>
+          <button id="add-task-btn" class="button primary">Adicionar Tarefa</button>
+          <div class="menu-container">
+            <button id="menu-btn" class="button icon-button">⋮</button>
+            <div id="menu-dropdown" class="menu-dropdown hidden">
+              <button id="import-btn" class="menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="feather feather-upload">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span>Importar JSON</span>
+              </button>
+              <input type="file" id="import-input" accept=".json" class="hidden">
+              <button id="export-btn" class="menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="feather feather-download">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Exportar JSON</span>
+              </button>
+              <button id="manage-tags-btn" class="menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="feather feather-tag">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                  <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+                <span>Gerenciar Tags</span>
+              </button>
+              <button id="toggle-archived-btn" class="menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="feather feather-archive">
+                  <polyline points="21 8 21 21 3 21 3 8"></polyline>
+                  <rect x="1" y="3" width="22" height="5"></rect>
+                  <line x1="10" y1="12" x2="14" y2="12"></line>
+                </svg>
+                <span>Mostrar Arquivados</span>
+              </button>
+              <button id="clear-data-btn" class="danger menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="feather feather-trash-2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+                <span>Limpar Dados</span>
+              </button>
+              <button id="install-pwa-btn" class="menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                  class="feather feather-download">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Instalar App</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="app-body">
+      <aside id="lists-sidebar" class="lists-sidebar">
+        <div class="lists-header">
+          <h3>Minhas Listas</h3>
+          <button id="add-list-btn" class="button icon-button" title="Adicionar Nova Lista">+</button>
+        </div>
+        <div id="lists-container" class="lists-container">
+          <!-- As listas serão inseridas aqui -->
+        </div>
+      </aside>
+      <main class="container">
+        <div id="list-header" class="list-header">
+          <h2 id="list-title-display"></h2>
+        </div>
+        <div id="tags-filter-container" class="tags-filter-container hidden">
+          <span class="filter-label">Filtrar por tags:</span>
+          <div id="active-tag-filters" class="active-tag-filters"></div>
+          <span id="clear-filters" class="clear-filters">Limpar filtros</span>
+        </div>
+        <div id="tasks-list" class="tasks-list">
+          <!-- As tarefas serão inseridas aqui -->
+        </div>
+        <div id="empty-state" class="empty-state hidden">
+          <svg class="logo-large" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          <h2 id="empty-state-title">Sua lista de tarefas está vazia</h2>
+          <p id="empty-state-message">Clique em "Adicionar Tarefa" para começar.</p>
+          <button id="empty-state-add-btn" class="button primary">Adicionar sua primeira tarefa</button>
+        </div>
+        <div class="footer-text">Criado por Artur Vale com ❤️</div>
+      </main>
+    </div>
+
+    <div id="add-edit-dialog" class="dialog hidden">
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h2 id="dialog-title">Adicionar Nova Tarefa</h2>
+          <button id="close-dialog-btn" class="close-button">&times;</button>
+        </div>
+        <form id="add-edit-form">
+          <input type="hidden" id="task-id">
+          <div class="form-group">
+            <label for="task-title">Título</label>
+            <input type="text" id="task-title" placeholder="O que você precisa fazer?" required>
+          </div>
+          <div class="form-group">
+            <label for="task-description">Descrição (opcional)</label>
+            <textarea id="task-description" placeholder="Adicione mais detalhes sobre a tarefa..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="task-tags">Tags</label>
+            <div id="task-tags-container" class="tags-container-edit">
+              <!-- Tags selecionáveis serão inseridas aqui -->
+            </div>
+          </div>
+          <div class="dialog-footer">
+            <button type="button" id="cancel-dialog-btn" class="button secondary">Cancelar</button>
+            <button type="submit" id="save-task-btn" class="button primary">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="manage-tags-dialog" class="dialog hidden">
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h2>Gerenciar Tags</h2>
+          <button id="close-manage-tags-dialog-btn" class="close-button">&times;</button>
+        </div>
+        <form id="add-tag-form" class="form-group">
+          <input type="hidden" id="tag-id-input">
+          <input type="text" id="tag-name-input" placeholder="Nome da tag" required>
+          <div id="tag-color-container" class="color-selector">
+            <!-- Cores serão inseridas aqui pelo JS -->
+          </div>
+          <button type="submit" class="button primary salvar-tag">Salvar Tag</button>
+          <button type="button" id="cancel-edit-tag-btn" class="button secondary hidden">Cancelar</button>
+        </form>
+        <div id="tags-list" class="tags-list">
+          <!-- Lista de tags existentes será inserida aqui -->
+        </div>
+      </div>
+    </div>
+
+    <div id="confirm-dialog" class="dialog hidden">
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h2 id="confirm-dialog-title">Confirmar Exclusão</h2>
+          <button id="close-confirm-dialog-btn" class="close-button">&times;</button>
+        </div>
+        <p id="confirm-dialog-message">Tem certeza que deseja excluir esta tarefa?</p>
+        <div class="dialog-footer">
+          <button type="button" id="cancel-confirm-btn" class="button secondary">Cancelar</button>
+          <button type="button" id="confirm-delete-btn" class="button danger">Excluir</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="move-task-dialog" class="dialog hidden">
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h2>Mover Tarefa Para...</h2>
+          <button id="close-move-task-dialog-btn" class="close-button">&times;</button>
+        </div>
+        <div id="move-task-lists-container">
+          <!-- Opções de lista para mover serão inseridas aqui -->
+        </div>
+      </div>
+    </div>
+
+    <div id="create-list-dialog" class="dialog hidden">
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h2>Criar Nova Lista</h2>
+          <button id="close-create-list-dialog-btn" class="close-button">&times;</button>
+        </div>
+        <form id="create-list-form">
+          <div class="form-group">
+            <label for="list-name-input">Nome da Lista</label>
+            <input type="text" id="list-name-input" placeholder="Digite o nome da lista..." required maxlength="50">
+          </div>
+          <div class="dialog-footer">
+            <button type="button" id="cancel-create-list-btn" class="button secondary">Cancelar</button>
+            <button type="submit" class="button primary">Criar Lista</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+    <div id="notification-container" class="notification-container"></div>
+  </div>
+</body>
+
+</html>
