@@ -1129,3 +1129,24 @@ dialog.confirmation-dialog::backdrop {
   color: var(--archived-text);
   margin-top: 2rem;
 }
+/* Ajustes para o menu no Modo Escuro */
+[data-theme="dark"] .menu-dropdown {
+  background-color: var(--card-background); /* Garante que o fundo do dropdown seja escuro */
+  border-color: var(--border-color); /* Ajusta a cor da borda */
+}
+
+[data-theme="dark"] .menu-item {
+  color: var(--text-color); /* Garante que o texto do item do menu seja claro */
+}
+
+[data-theme="dark"] .menu-item:hover {
+  background-color: var(--hover-color); /* Cor de hover para o modo escuro */
+}
+
+[data-theme="dark"] .menu-item svg {
+  stroke: var(--text-color); /* Cor dos ícones no modo escuro */
+}
+
+[data-theme="dark"] .menu-item.danger {
+  color: var(--accent-color); /* Cor de perigo para o modo escuro */
+}
