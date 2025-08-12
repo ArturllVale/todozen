@@ -95,16 +95,25 @@
                 </svg>
                 <span>Gerenciar Tags</span>
               </button>
-              <button id="toggle-archived-btn" class="menu-item">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                  class="feather feather-archive">
-                  <polyline points="21 8 21 21 3 21 3 8"></polyline>
-                  <rect x="1" y="3" width="22" height="5"></rect>
-                  <line x1="10" y1="12" x2="14" y2="12"></line>
-                </svg>
-                <span>Mostrar Arquivados</span>
-              </button>
+              <button id="toggle-calendar-btn" class="menu-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Visualização em Calendário</span>
+          </button>
+          <button id="toggle-archived-btn" class="menu-item">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="feather feather-archive">
+              <polyline points="21 8 21 21 3 21 3 8"></polyline>
+              <rect x="1" y="3" width="22" height="5"></rect>
+              <line x1="10" y1="12" x2="14" y2="12"></line>
+            </svg>
+            <span>Mostrar Arquivados</span>
+          </button>
               <button id="clear-data-btn" class="danger menu-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -133,6 +142,22 @@
     </header>
 
     <div class="app-body">
+      <div id="calendar-container" class="calendar-container hidden">
+        <div class="calendar-header">
+          <button id="prev-month-btn" class="button icon-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <h2 id="calendar-month-year"></h2>
+          <button id="next-month-btn" class="button icon-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+        <div id="calendar-days" class="calendar-days"></div>
+      </div>
       <aside id="lists-sidebar" class="lists-sidebar">
         <div class="lists-header">
           <h3>Minhas Listas</h3>
@@ -185,6 +210,39 @@
             <textarea id="task-description" placeholder="Adicione mais detalhes sobre a tarefa..."></textarea>
           </div>
           <div class="form-group">
+            <label for="task-due-date">Data de Vencimento (opcional)</label>
+            <input type="datetime-local" id="task-due-date">
+          </div>
+          <div class="form-row">
+            <div class="form-group notification-time hidden">
+              <label for="task-notification-time">Notificar antes</label>
+              <select id="task-notification-time" name="task-notification-time">
+                <option value="5">5 minutos</option>
+                <option value="10">10 minutos</option>
+                <option value="15">15 minutos</option>
+                <option value="30">30 minutos</option>
+                <option value="60" selected>1 hora</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="task-priority">Prioridade</label>
+              <select id="task-priority">
+                <option value="low">Baixa</option>
+                <option value="medium" selected>Média</option>
+                <option value="high">Alta</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="task-recurrence">Recorrência</label>
+              <select id="task-recurrence">
+                <option value="none">Sem recorrência</option>
+                <option value="daily">Diariamente</option>
+                <option value="weekly">Semanalmente</option>
+                <option value="monthly">Mensalmente</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
             <label for="task-tags">Tags</label>
             <div id="task-tags-container" class="tags-container-edit">
               <!-- Tags selecionáveis serão inseridas aqui -->
@@ -193,6 +251,7 @@
           <div class="dialog-footer">
             <button type="button" id="cancel-dialog-btn" class="button secondary">Cancelar</button>
             <button type="submit" id="save-task-btn" class="button primary">Salvar</button>
+          </div>
           </div>
         </form>
       </div>
@@ -204,17 +263,27 @@
           <h2>Gerenciar Tags</h2>
           <button id="close-manage-tags-dialog-btn" class="close-button">&times;</button>
         </div>
-        <form id="add-tag-form" class="form-group">
-          <input type="hidden" id="tag-id-input">
-          <input type="text" id="tag-name-input" placeholder="Nome da tag" required>
-          <div id="tag-color-container" class="color-selector">
-            <!-- Cores serão inseridas aqui pelo JS -->
+        <div class="dialog-body">
+          <form id="add-tag-form" class="form-group">
+            <input type="hidden" id="tag-id-input">
+            <div class="form-group">
+              <label for="tag-name-input">Nome da Tag</label>
+              <input type="text" id="tag-name-input" placeholder="Digite o nome da tag" required>
+            </div>
+            <div class="form-group">
+              <label>Cor da Tag</label>
+              <div id="tag-color-container" class="color-selector">
+                <!-- Cores serão inseridas aqui pelo JS -->
+              </div>
+            </div>
+            <div class="dialog-footer">
+              <button type="button" id="cancel-edit-tag-btn" class="button secondary hidden">Cancelar</button>
+              <button type="submit" class="button primary salvar-tag">Salvar Tag</button>
+            </div>
+          </form>
+          <div id="tags-list" class="tags-list">
+            <!-- Lista de tags existentes será inserida aqui -->
           </div>
-          <button type="submit" class="button primary salvar-tag">Salvar Tag</button>
-          <button type="button" id="cancel-edit-tag-btn" class="button secondary hidden">Cancelar</button>
-        </form>
-        <div id="tags-list" class="tags-list">
-          <!-- Lista de tags existentes será inserida aqui -->
         </div>
       </div>
     </div>
@@ -236,11 +305,42 @@
     <div id="move-task-dialog" class="dialog hidden">
       <div class="dialog-content">
         <div class="dialog-header">
-          <h2>Mover Tarefa Para...</h2>
-          <button id="close-move-task-dialog-btn" class="close-button">&times;</button>
+          <h2>Mover para Lista</h2>
+          <button id="close-move-task-dialog-btn" class="button icon-button close-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
         </div>
-        <div id="move-task-lists-container">
-          <!-- Opções de lista para mover serão inseridas aqui -->
+        <div id="move-task-lists-container" class="lists-container">
+          <!-- Listas serão inseridas aqui -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Diálogo de exportação -->
+    <div id="export-dialog" class="dialog hidden">
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h2>Exportar Dados</h2>
+          <button id="close-export-dialog-btn" class="button icon-button close-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+        <div class="dialog-body">
+          <p>Escolha o que deseja exportar:</p>
+          <div class="export-options">
+            <button id="export-current-list-btn" class="button primary block">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+              Exportar Lista Atual
+            </button>
+            <button id="export-all-lists-btn" class="button primary block">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+              Exportar Todas as Listas
+            </button>
+            <button id="cancel-export-btn" class="button block">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              Cancelar
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -27,6 +27,20 @@ todozen/
 - 📦 **Arquivar** tarefas concluídas
 - 🌙 **Modo escuro/claro**
 - 📱 **PWA** - Instalável como app
+- ⏰ **Datas e Lembretes**
+  - Defina datas de vencimento
+  - Escolha tempo de notificação (5-60 minutos)
+  - Notificações precisas antes do vencimento
+- 🔄 **Tarefas Recorrentes**
+  - Opções: diária, semanal, mensal
+  - Visualização clara do tipo de recorrência
+- 🎯 **Prioridades**
+  - Níveis: baixa, média, alta
+  - Indicadores visuais por cores
+- ⌨️ **Atalhos de Teclado**
+  - N: Nova tarefa
+  - F: Busca
+  - ESC: Fechar diálogos
 
 ### Melhorias Implementadas
 1. **Estrutura organizada** - Pastas separadas para CSS, JS e assets
@@ -46,17 +60,27 @@ todozen/
 ## 🚀 Como Usar
 
 1. Abra o `index.html` no navegador
-2. Clique em "Adicionar Tarefa" para criar uma nova tarefa
-3. Preencha título, descrição (opcional) e selecione/crie tags
-4. Use a busca para encontrar tarefas específicas
+2. Clique em "Adicionar Tarefa" (ou pressione N) para criar uma nova tarefa
+3. Preencha:
+   - Título e descrição (opcional)
+   - Data de vencimento e tempo de notificação
+   - Prioridade (baixa, média, alta)
+   - Recorrência (diária, semanal, mensal)
+   - Selecione/crie tags
+4. Use a busca (atalho F) para encontrar tarefas específicas
 5. Clique em tags para filtrar tarefas
 6. Gerencie suas tags através do menu
+7. Use ESC para fechar diálogos rapidamente
 
 ## 💾 Armazenamento
 
 Todos os dados são salvos localmente no navegador usando localStorage. Você pode:
 - **Exportar** seus dados em formato JSON
+  - Exportar todas as listas
+  - Exportar apenas a lista atual
 - **Importar** dados de backup
+  - Importar como nova lista
+  - Mesclar com dados existentes
 - **Limpar** todos os dados se necessário
 
 ## 🔧 Tecnologias

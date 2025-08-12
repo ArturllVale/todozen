@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Mapeamento dos elementos do DOM para variáveis
   const searchInput = document.getElementById('search-input');
+  const taskDueDateInput = document.getElementById('task-due-date');
+  const taskPrioritySelect = document.getElementById('task-priority');
+  const taskRecurrenceSelect = document.getElementById('task-recurrence');
+  const taskNotificationTimeSelect = document.getElementById('task-notification-time');
+  const notificationTimeGroup = document.querySelector('.notification-time');
   const tasksListContainer = document.getElementById('tasks-list');
   const emptyState = document.getElementById('empty-state');
   const emptyStateTitle = document.getElementById('empty-state-title');
@@ -76,6 +81,71 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Variáveis de estado
   let activeTagFilters = [];
+  let notificationPermission = false;
+
+  // Solicitar permissão para notificações
+  if ('Notification' in window) {
+    Notification.requestPermission().then(permission => {
+      notificationPermission = permission === 'granted';
+    });
+  }
+
+  // Atalhos de teclado
+  document.addEventListener('keydown', (e) => {
+    // Evita atalhos quando estiver em campos de input
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+    if (e.key === 'n' && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      addTaskBtn.click();
+    } else if (e.key === 'f' && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      searchInput.focus();
+    } else if (e.key === 'Escape') {
+      const openDialog = document.querySelector('.dialog:not(.hidden)');
+      if (openDialog) {
+        openDialog.querySelector('.close-button').click();
+      }
+    }
+  });
+
+  // Verificar tarefas vencidas e enviar notificações
+  function checkOverdueTasks() {
+    if (!notificationPermission) return;
+
+    const tasks = getTasks();
+    const now = new Date();
+
+    tasks.forEach(task => {
+      if (task.dueDate && !task.completed && !task.notificationSent) {
+        const dueDate = new Date(task.dueDate);
+        const timeDiff = dueDate - now;
+        const notificationTime = (task.notificationMinutes || 60) * 60000; // Converter minutos para milissegundos
+
+        // Notificar X minutos antes do vencimento (padrão: 60 minutos)
+        if (timeDiff > 0 && timeDiff <= notificationTime) {
+          const minutesText = task.notificationMinutes === 1 ? 'minuto' : 'minutos';
+          new Notification('Tarefa próxima do vencimento', {
+            body: `A tarefa "${task.title}" vence em ${task.notificationMinutes || 60} ${minutesText}!`,
+            icon: 'assets/icon.svg'
+          });
+
+          // Marcar como notificado
+          task.notificationSent = true;
+          const tasks = getTasks();
+          const taskIndex = tasks.findIndex(t => t.id === task.id);
+          if (taskIndex !== -1) {
+            tasks[taskIndex].notificationSent = true;
+            saveTasks(tasks);
+          }
+        }
+      }
+    });
+  }
+
+  // Verificar tarefas vencidas a cada minuto
+  setInterval(checkOverdueTasks, 60000);
+
   let showArchived = false;
   let taskToDeleteId = null;
   let deferredPrompt;
@@ -208,24 +278,51 @@ document.addEventListener('DOMContentLoaded', () => {
    * Cria o elemento HTML para uma única tarefa.
    * @param {object} task - O objeto da tarefa.
    */
+  function formatDueDate(dueDate) {
+    if (!dueDate) return '';
+    const date = new Date(dueDate);
+    return date.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  function isOverdue(dueDate) {
+    if (!dueDate) return false;
+    return new Date(dueDate) < new Date();
+  }
+
+  function getRecurrenceText(recurrence) {
+    const texts = {
+      daily: 'Diariamente',
+      weekly: 'Semanalmente',
+      monthly: 'Mensalmente'
+    };
+    return texts[recurrence] || '';
+  }
+
   function createTaskElement(task) {
     const taskEl = document.createElement('div');
     taskEl.className = 'task-item';
     taskEl.classList.toggle('completed', task.completed);
     taskEl.classList.toggle('favorited', task.favorited);
     taskEl.classList.toggle('archived', task.archived);
+    if (task.priority) {
+      taskEl.classList.add(`priority-${task.priority}`);
+    }
     taskEl.dataset.taskId = task.id;
 
     const tags = getTags();
 
     // Determinar a cor da faixa lateral baseada na primeira tag
-    let tagColor = null;
     if (task.tags && task.tags.length > 0) {
       const firstTag = tags.find(t => t.id === task.tags[0]);
       if (firstTag) {
-        tagColor = firstTag.color;
         taskEl.classList.add('has-tag');
-        taskEl.style.setProperty('--tag-color', tagColor);
+        taskEl.style.setProperty('--tag-color', firstTag.color);
       }
     }
 
@@ -241,6 +338,23 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="task-content">
         <div class="task-title-text">${task.title}</div>
         ${descriptionHtml}
+        ${task.dueDate ? `
+          <div class="task-due-date ${isOverdue(task.dueDate) ? 'overdue' : ''}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            ${formatDueDate(task.dueDate)}
+          </div>
+        ` : ''}
+        ${task.recurrence && task.recurrence !== 'none' ? `
+          <div class="task-recurrence">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
+            </svg>
+            ${getRecurrenceText(task.recurrence)}
+          </div>
+        ` : ''}
         <div class="task-tags">${taskTagsHtml}</div>
       </div>
       <div class="task-actions">
@@ -330,6 +444,11 @@ document.addEventListener('DOMContentLoaded', () => {
         tasks[taskIndex].title = title;
         tasks[taskIndex].description = description;
         tasks[taskIndex].tags = selectedTags;
+        tasks[taskIndex].dueDate = taskDueDateInput.value || null;
+        tasks[taskIndex].priority = taskPrioritySelect.value;
+        tasks[taskIndex].recurrence = taskRecurrenceSelect.value;
+        tasks[taskIndex].notificationMinutes = taskDueDateInput.value ? parseInt(taskNotificationTimeSelect.value) : null;
+        tasks[taskIndex].notificationSent = false;
       }
     } else { // Adicionando
       const newTask = {
@@ -337,11 +456,16 @@ document.addEventListener('DOMContentLoaded', () => {
         title,
         description,
         tags: selectedTags,
-        listId: activeListId, // Adiciona o ID da lista ativa
+        listId: activeListId,
         completed: false,
         favorited: false,
         archived: false,
-        createdAt: Date.now()
+        createdAt: Date.now(),
+        dueDate: taskDueDateInput.value || null,
+        priority: taskPrioritySelect.value,
+        recurrence: taskRecurrenceSelect.value,
+        notificationMinutes: taskDueDateInput.value ? parseInt(taskNotificationTimeSelect.value) : null,
+        notificationSent: false
       };
       tasks.unshift(newTask);
     }
@@ -355,22 +479,41 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Funções do Diálogo ---
 
   function openDialog(mode, id = null) {
+    const resetForm = () => {
+      taskDueDateInput.value = '';
+      taskPrioritySelect.value = 'medium';
+      taskRecurrenceSelect.value = 'none';
+      taskNotificationTimeSelect.value = '60';
+      notificationTimeGroup.classList.add('hidden');
+    };
+
     addEditForm.reset();
     if (mode === 'edit') {
       const task = getTasks().find(t => t.id === id);
       if (task) {
         dialogTitle.textContent = 'Editar Tarefa';
-        taskIdInput.value = task.id;
-        taskTitleInput.value = task.title;
-        taskDescriptionInput.value = task.description || '';
+      taskIdInput.value = task.id;
+      taskTitleInput.value = task.title;
+      taskDescriptionInput.value = task.description || '';
+      taskDueDateInput.value = task.dueDate || '';
+      taskPrioritySelect.value = task.priority || 'medium';
+      taskRecurrenceSelect.value = task.recurrence || 'none';
+      taskNotificationTimeSelect.value = task.notificationMinutes || '60';
+      notificationTimeGroup.classList.toggle('hidden', !task.dueDate);
         renderSelectableTags(task.tags || []);
       }
     } else {
       dialogTitle.textContent = 'Adicionar Nova Tarefa';
+      resetForm();
       renderSelectableTags([]);
     }
     addEditDialog.classList.remove('hidden');
     taskTitleInput.focus();
+
+    // Mostrar/ocultar campo de notificação quando a data de vencimento é preenchida/limpa
+    taskDueDateInput.addEventListener('change', () => {
+      notificationTimeGroup.classList.toggle('hidden', !taskDueDateInput.value);
+    });
   }
 
   function closeDialog() {
@@ -475,16 +618,108 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     clearDataBtn.addEventListener('click', () => {
-      if (confirm('Tem certeza que deseja apagar TUDO? Essa ação é irreversível.')) {
-        saveTasks([]);
-        saveTags([]);
-        renderTasks();
-        showNotification('Dados apagados com sucesso.', 'danger');
-      }
+      const dialog = document.createElement('dialog');
+      dialog.classList.add('confirmation-dialog');
+      dialog.innerHTML = `
+        <div class="dialog-content">
+          <h3>Limpar Dados</h3>
+          <p>Tem certeza que deseja limpar todos os dados? Esta ação não pode ser desfeita.</p>
+          <div class="dialog-buttons">
+            <button class="btn btn-secondary" data-action="cancel">Cancelar</button>
+            <button class="btn btn-danger" data-action="confirm">Limpar Dados</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(dialog);
+      dialog.showModal();
+
+      dialog.addEventListener('click', (e) => {
+        if (e.target === dialog) {
+          dialog.close();
+          document.body.removeChild(dialog);
+        }
+      });
+
+      dialog.addEventListener('close', () => {
+        document.body.removeChild(dialog);
+      });
+
+      const buttons = dialog.querySelectorAll('button');
+      buttons.forEach(button => {
+        button.addEventListener('click', () => {
+          if (button.dataset.action === 'confirm') {
+            saveTasks([]);
+            saveTags([]);
+            saveLists([]);
+            renderTasks();
+            renderLists();
+            showNotification('Dados apagados com sucesso.', 'danger');
+            dialog.close();
+          } else {
+            dialog.close();
+          }
+        });
+      });
     });
 
+    const exportDialog = document.getElementById('export-dialog');
+    const closeExportDialogBtn = document.getElementById('close-export-dialog-btn');
+    const exportCurrentListBtn = document.getElementById('export-current-list-btn');
+    const exportAllListsBtn = document.getElementById('export-all-lists-btn');
+    const cancelExportBtn = document.getElementById('cancel-export-btn');
+
     exportBtn.addEventListener('click', () => {
+      exportDialog.classList.remove('hidden');
+    });
+
+    closeExportDialogBtn.addEventListener('click', () => {
+      exportDialog.classList.add('hidden');
+    });
+
+    cancelExportBtn.addEventListener('click', () => {
+      exportDialog.classList.add('hidden');
+    });
+
+    exportCurrentListBtn.addEventListener('click', () => {
+      if (!activeListId) {
+        showNotification('Selecione uma lista para exportar', 'danger');
+        return;
+      }
+
+      const lists = getLists();
+      const tasks = getTasks();
+      const tags = getTags();
+      
+      const activeList = lists.find(l => l.id === activeListId);
+      const listTasks = tasks.filter(t => t.listId === activeListId);
+      const usedTagIds = new Set();
+      listTasks.forEach(task => {
+        if (task.tags) {
+          task.tags.forEach(tagId => usedTagIds.add(tagId));
+        }
+      });
+      const listTags = tags.filter(tag => usedTagIds.has(tag.id));
+      
       const data = {
+        lists: [activeList],
+        tasks: listTasks,
+        tags: listTags
+      };
+      const jsonString = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonString], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `todo-zen-${activeList.name.toLowerCase().replace(/\s+/g, '-')}-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      exportDialog.classList.add('hidden');
+      showNotification('Lista exportada com sucesso!', 'success');
+    });
+
+    exportAllListsBtn.addEventListener('click', () => {
+      const data = {
+        lists: getLists(),
         tasks: getTasks(),
         tags: getTags()
       };
@@ -496,6 +731,8 @@ document.addEventListener('DOMContentLoaded', () => {
       a.download = `todo-zen-backup-${new Date().toISOString().split('T')[0]}.json`;
       a.click();
       URL.revokeObjectURL(url);
+      exportDialog.classList.add('hidden');
+      showNotification('Backup completo exportado com sucesso!', 'success');
     });
 
     importBtn.addEventListener('click', () => importInput.click());
@@ -506,14 +743,93 @@ document.addEventListener('DOMContentLoaded', () => {
       reader.onload = (event) => {
         try {
           const data = JSON.parse(event.target.result);
-          if (data.tasks && data.tags) {
-            saveTasks(data.tasks);
-            saveTags(data.tags);
-            renderTasks();
-            showNotification('Dados importados com sucesso!', 'success');
-          } else {
+          
+          // Verifica se é um arquivo de backup válido
+          if (!data.tasks || !data.tags || !data.lists) {
             throw new Error('Formato de arquivo inválido.');
           }
+          
+          // Se houver apenas uma lista no arquivo, pergunta se deseja importar como nova lista
+          if (data.lists.length === 1) {
+            const importAsList = confirm('Deseja importar como uma nova lista? Clique em OK para criar uma nova lista ou Cancelar para mesclar com os dados existentes.');
+            
+            if (importAsList) {
+              // Gera novos IDs para evitar conflitos
+              const newListId = crypto.randomUUID();
+              const idMap = new Map();
+              
+              // Cria a nova lista
+              const newList = {
+                ...data.lists[0],
+                id: newListId,
+                name: `${data.lists[0].name} (Importada)`,
+                createdAt: Date.now()
+              };
+              
+              // Atualiza os IDs das tarefas
+              const newTasks = data.tasks.map(task => {
+                const newTaskId = crypto.randomUUID();
+                idMap.set(task.id, newTaskId);
+                return {
+                  ...task,
+                  id: newTaskId,
+                  listId: newListId
+                };
+              });
+              
+              // Atualiza os IDs das tags
+              const existingTags = getTags();
+              const newTags = data.tags.map(tag => {
+                // Verifica se já existe uma tag com o mesmo nome
+                const existingTag = existingTags.find(t => t.name === tag.name);
+                if (existingTag) {
+                  idMap.set(tag.id, existingTag.id);
+                  return existingTag;
+                } else {
+                  const newTagId = crypto.randomUUID();
+                  idMap.set(tag.id, newTagId);
+                  return { ...tag, id: newTagId };
+                }
+              });
+              
+              // Atualiza as referências de tags nas tarefas
+              newTasks.forEach(task => {
+                if (task.tags) {
+                  task.tags = task.tags.map(tagId => idMap.get(tagId) || tagId);
+                }
+              });
+              
+              // Salva os dados
+              const lists = getLists();
+              lists.push(newList);
+              saveLists(lists);
+              
+              const tasks = getTasks();
+              tasks.push(...newTasks);
+              saveTasks(tasks);
+              
+              const uniqueTags = [...existingTags];
+              newTags.forEach(tag => {
+                if (!uniqueTags.some(t => t.id === tag.id)) {
+                  uniqueTags.push(tag);
+                }
+              });
+              saveTags(uniqueTags);
+              
+              // Ativa a nova lista
+              switchActiveList(newListId);
+              showNotification('Lista importada com sucesso!', 'success');
+              return;
+            }
+          }
+          
+          // Importação normal (mescla com dados existentes)
+          saveLists([...getLists(), ...data.lists]);
+          saveTasks([...getTasks(), ...data.tasks]);
+          saveTags([...getTags(), ...data.tags]);
+          renderTasks();
+          showNotification('Dados importados com sucesso!', 'success');
+          
         } catch (error) {
           showNotification('Erro ao importar arquivo.', 'danger');
         }
@@ -892,6 +1208,181 @@ document.addEventListener('DOMContentLoaded', () => {
   closeMoveTaskDialogBtn.addEventListener('click', closeMoveTaskDialog);
 
 
+  // Funções do Calendário
+  const calendarView = document.getElementById('calendar-view');
+  const calendarMonthYear = document.getElementById('calendar-month-year');
+  const calendarDays = document.getElementById('calendar-days');
+  const prevMonthBtn = document.getElementById('prev-month-btn');
+  const nextMonthBtn = document.getElementById('next-month-btn');
+  const toggleCalendarBtn = document.getElementById('toggle-calendar-btn');
+  const calendarContainer = document.getElementById('calendar-container');
+
+  let currentDate = new Date();
+
+  function updateCalendar() {
+    console.log('Atualizando calendário...');
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startingDay = firstDay.getDay();
+    const totalDays = lastDay.getDate();
+
+    calendarMonthYear.textContent = firstDay.toLocaleString('pt-BR', { month: 'long', year: 'numeric' });
+    calendarDays.innerHTML = '';
+
+    // Cabeçalho dos dias da semana
+    const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    weekDays.forEach(day => {
+      const dayHeader = document.createElement('div');
+      dayHeader.className = 'calendar-header-day';
+      dayHeader.textContent = day;
+      calendarDays.appendChild(dayHeader);
+    });
+
+    // Dias do mês anterior
+    for (let i = 0; i < startingDay; i++) {
+      const prevMonthLastDay = new Date(year, month, 0).getDate();
+      const dayEl = createCalendarDay(prevMonthLastDay - startingDay + i + 1, true);
+      calendarDays.appendChild(dayEl);
+    }
+
+    // Dias do mês atual
+    const allTasks = getTasks();
+    console.log('Total de tarefas:', allTasks.length);
+    
+    // Filtrar tarefas da lista ativa
+    const tasks = allTasks.filter(task => task.listId === activeListId);
+    console.log('Tarefas na lista ativa:', tasks.length);
+    
+    // Contar tarefas com data de vencimento
+    const tasksWithDueDate = tasks.filter(task => task.dueDate);
+    console.log('Tarefas com data de vencimento:', tasksWithDueDate.length);
+    
+    for (let day = 1; day <= totalDays; day++) {
+      const dayTasks = tasks.filter(task => {
+        if (!task.dueDate) return false;
+        const taskDate = new Date(task.dueDate);
+        return taskDate.getDate() === day &&
+               taskDate.getMonth() === month &&
+               taskDate.getFullYear() === year;
+      });
+
+      if (dayTasks.length > 0) {
+        console.log(`Dia ${day}: ${dayTasks.length} tarefas`);
+      }
+
+      const dayEl = createCalendarDay(day, false, dayTasks);
+      calendarDays.appendChild(dayEl);
+    }
+
+    // Dias do próximo mês
+    const remainingDays = 35 - (startingDay + totalDays); // 5 semanas * 7 dias = 35
+    for (let i = 1; i <= remainingDays; i++) {
+      const dayEl = createCalendarDay(i, true);
+      calendarDays.appendChild(dayEl);
+    }
+  }
+
+
+
+  toggleCalendarBtn.addEventListener('click', () => {
+    const mainContainer = document.querySelector('main.container');
+    const calendarContainer = document.getElementById('calendar-container');
+    
+    if (mainContainer && calendarContainer) {
+      mainContainer.classList.toggle('hidden');
+      calendarContainer.classList.toggle('hidden');
+      
+      if (!calendarContainer.classList.contains('hidden')) {
+        updateCalendar();
+      }
+    }
+  });
+
+  prevMonthBtn.addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    updateCalendar();
+  });
+
+  nextMonthBtn.addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    updateCalendar();
+  });
+
+  function createCalendarDay(day, otherMonth = false, tasks = []) {
+    const dayEl = document.createElement('div');
+    dayEl.className = 'calendar-day';
+    if (otherMonth) dayEl.classList.add('other-month');
+
+    const today = new Date();
+    if (!otherMonth &&
+        day === today.getDate() &&
+        currentDate.getMonth() === today.getMonth() &&
+        currentDate.getFullYear() === today.getFullYear()) {
+      dayEl.classList.add('today');
+    }
+
+    // Limitar a 3 tarefas por dia para não sobrecarregar a visualização
+    const displayTasks = tasks.slice(0, 3);
+    
+    // Criar o número do dia
+    const dayNumber = document.createElement('div');
+    dayNumber.className = 'calendar-day-number';
+    dayNumber.textContent = day;
+    dayEl.appendChild(dayNumber);
+    
+    // Criar o container de tarefas
+    const tasksContainer = document.createElement('div');
+    tasksContainer.className = 'calendar-tasks';
+    dayEl.appendChild(tasksContainer);
+    
+    // Adicionar cada tarefa individualmente
+    displayTasks.forEach(task => {
+      const taskEl = document.createElement('div');
+      taskEl.className = `calendar-task priority-${task.priority || 'medium'}`;
+      taskEl.title = task.title;
+      taskEl.textContent = task.title;
+      taskEl.dataset.taskId = task.id;
+      
+      // Adicionar evento de clique para abrir a tarefa para edição
+      taskEl.addEventListener('click', () => {
+        openDialog('edit', task.id);
+      });
+      
+      tasksContainer.appendChild(taskEl);
+    });
+    
+    // Adicionar indicador de mais tarefas se necessário
+    if (tasks.length > 3) {
+      const moreEl = document.createElement('div');
+      moreEl.className = 'calendar-more';
+      moreEl.textContent = `+${tasks.length - 3} mais`;
+      tasksContainer.appendChild(moreEl);
+    }
+
+    // Adicionar evento de clique no dia para criar nova tarefa
+    if (!otherMonth) {
+      dayEl.addEventListener('click', (e) => {
+        // Evita propagar o clique se clicar em uma tarefa
+        if (e.target.classList.contains('calendar-task')) return;
+        
+        // Configura a data para o dia clicado
+        const selectedDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+        const formattedDate = selectedDate.toISOString().slice(0, 16); // Formato YYYY-MM-DDTHH:MM
+        
+        // Abre o diálogo de criação de tarefa com a data preenchida
+        taskDueDateInput.value = formattedDate;
+        openDialog('add');
+      });
+    }
+
+    return dayEl;
+  }
+
   // Inicia a aplicação
   init();
+  
+  // Cria uma tarefa de teste para o calendário se necessário
+  createTestTaskForToday();
 });
