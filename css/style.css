@@ -707,6 +707,10 @@ body {
   border-radius: 8px;
   width: 90%;
   max-width: 420px;
+  max-height: 90vh; /* Limita a altura do diálogo */
+  overflow-y: auto; /* Adiciona rolagem vertical quando o conteúdo excede a altura */
+  display: flex;
+  flex-direction: column;
 }
 
 /* Diálogo de Confirmação */
@@ -763,6 +767,8 @@ dialog.confirmation-dialog::backdrop {
 
 .dialog-body {
   padding: 1rem 0;
+  flex-grow: 1; /* Permite que o corpo do diálogo ocupe o espaço disponível */
+  overflow-y: auto; /* Adiciona rolagem vertical ao corpo do diálogo */
 }
 
 .export-options {
@@ -870,6 +876,7 @@ dialog.confirmation-dialog::backdrop {
   justify-content: flex-end;
   gap: 1rem;
   margin-top: 1.5rem;
+  flex-shrink: 0; /* Garante que o rodapé não encolha */
 }
 
 /* Tags */
