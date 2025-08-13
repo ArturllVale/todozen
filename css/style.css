@@ -587,6 +587,16 @@ body {
   stroke: var(--favorite-indicator);
 }
 
+[data-theme="dark"] .task-actions button svg {
+  stroke: var(--text-color);
+}
+
+[data-theme="dark"] #sort-tasks-select {
+  background-color: var(--card-background);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
 /* Estado Vazio */
 .empty-state {
   text-align: center;
@@ -670,9 +680,9 @@ body {
   color: var(--pure-white);
 }
 
-.icon-button {
+/* .icon-button {
   padding: 0.5rem;
-}
+} */
 
 /* Menu */
 .menu-container {
