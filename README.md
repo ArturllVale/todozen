@@ -2,9 +2,6 @@
 
 **TODO Zen** é um aplicativo de gerenciamento de tarefas elegante e poderoso, construído com HTML, CSS e JavaScript puro. Ele foi projetado para ser intuitivo, rápido e visualmente agradável, ajudando você a organizar seu dia a dia com mais clareza e tranquilidade.
 
-![placeholder](https://user-images.githubusercontent.com/1162569/180210212-0b73c434-f85a-446c-a8a2-a764d7c07b7b.png)
-*(Uma captura de tela da aplicação será inserida aqui)*
-
 ---
 
 ## 🌟 Funcionalidades Principais
