@@ -467,16 +467,6 @@ body {
   background-color: var(--tag-color, var(--primary-color));
 }
 
-.task-meta-info {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 0.5rem;
-  font-size: 0.8rem;
-  color: var(--archived-text);
-}
-
 .task-due-date, .task-recurrence, .task-priority-indicator {
   display: flex;
   align-items: center;
@@ -485,6 +475,7 @@ body {
 
 .task-priority-indicator {
   padding: 0.1rem 0.5rem;
+  width: fit-content;
   border-radius: 12px;
   font-size: 0.75rem;
   font-weight: 500;
@@ -808,7 +799,6 @@ dialog.confirmation-dialog::backdrop {
 }
 
 .dialog-body {
-  padding: 1rem 0;
   flex-grow: 1; /* Permite que o corpo do diálogo ocupe o espaço disponível */
   overflow-y: auto; /* Adiciona rolagem vertical ao corpo do diálogo */
 }
@@ -838,7 +828,6 @@ dialog.confirmation-dialog::backdrop {
 
 .dialog-header {
   position: relative;
-  margin-bottom: 1rem;
 }
 
 .close-button {
@@ -979,7 +968,7 @@ dialog.confirmation-dialog::backdrop {
 }
 
 .view-task-section {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 1rem;
 }
@@ -999,7 +988,7 @@ dialog.confirmation-dialog::backdrop {
 #view-task-meta {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.4rem;
 }
 
 #view-task-tags-container {
