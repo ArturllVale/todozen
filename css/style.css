@@ -282,7 +282,31 @@ body {
 }
 
 .list-header {
-    margin-bottom: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.sort-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-label {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+#sort-tasks-select {
+  background-color: var(--background);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
 }
 
 #list-title-display {

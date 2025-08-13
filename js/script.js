@@ -41,6 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Busca de tarefas
   elements.searchInput.addEventListener('input', () => taskManager.renderTasks());
 
+  // Ordenação de tarefas
+  elements.sortTasksSelect.addEventListener('change', (e) => {
+    taskManager.setSortBy(e.target.value);
+    taskManager.renderTasks();
+  });
+
   // Botões de adicionar tarefa
   elements.addTaskBtn.addEventListener('click', () => dialogManager.openTaskDialog('add'));
   elements.emptyStateAddBtn.addEventListener('click', () => dialogManager.openTaskDialog('add'));
@@ -275,6 +281,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Renderiza as listas primeiro
     listManager.renderLists();
     
+    // Define o valor inicial do seletor de ordenação
+    elements.sortTasksSelect.value = taskManager.sortBy;
+
     // Renderiza as tarefas
     taskManager.renderTasks();
     

@@ -12,6 +12,7 @@ export const elements = {
   emptyStateTitle: document.getElementById('empty-state-title'),
   emptyStateMessage: document.getElementById('empty-state-message'),
   emptyStateAddBtn: document.getElementById('empty-state-add-btn'),
+  sortTasksSelect: document.getElementById('sort-tasks-select'),
 
   // Sidebar
   toggleSidebarBtn: document.getElementById('toggle-sidebar-btn'),

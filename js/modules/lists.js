@@ -94,20 +94,12 @@ export class ListManager {
     let tasks = storage.getTasks();
     const taskIndex = tasks.findIndex(t => t.id === taskId);
     if (taskIndex > -1) {
-      const task = tasks[taskIndex];
-      console.log(`Tarefa ${taskId} filtrada: ${task.listId === newListId}`);
-      console.log(`Tarefa ${taskId} encontrada na lista ${tasks[taskIndex].listId}`);
       tasks[taskIndex].listId = newListId;
       storage.saveTasks(tasks);
       elements.moveTaskDialog.classList.add('hidden');
 
-      // Forçar a atualização da lista ativa
-      this.activeListId = newListId;
-      localStorage.setItem('todo_zen_active_list', newListId);
-      console.log(`Tarefa movida para a lista ${newListId}`);
-
-
-      // Atualizar a visualização das tarefas imediatamente
+      // A tarefa foi movida, mas a visualização do usuário não deve mudar.
+      // Apenas re-renderizamos a lista atual, e a tarefa movida desaparecerá.
       if (this.taskManager && typeof this.taskManager.renderTasks === 'function') {
         this.taskManager.renderTasks();
         utils.showNotification('Tarefa movida com sucesso!', 'success');
