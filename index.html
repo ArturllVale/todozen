@@ -175,6 +175,16 @@
       <main class="container">
         <div id="list-header" class="list-header">
           <h2 id="list-title-display"></h2>
+          <div id="sort-container" class="sort-container">
+            <label for="sort-tasks-select" class="sort-label">Ordenar por:</label>
+            <select id="sort-tasks-select">
+              <option value="creation-date-desc">Mais Recentes</option>
+              <option value="creation-date-asc">Mais Antigas</option>
+              <option value="due-date-asc">Data de Vencimento</option>
+              <option value="priority-desc">Prioridade (Alta-Baixa)</option>
+              <option value="priority-asc">Prioridade (Baixa-Alta)</option>
+            </select>
+          </div>
         </div>
         <div id="tags-filter-container" class="tags-filter-container hidden">
           <span class="filter-label">Filtrar por tags:</span>

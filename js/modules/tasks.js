@@ -3,12 +3,15 @@ import { storage } from './storage.js';
 import { elements } from './dom-elements.js';
 import { utils } from './utils.js';
 
+import { STORAGE_KEYS } from './constants.js';
+
 export class TaskManager {
   constructor() {
     this.activeTagFilters = [];
     this.showArchived = false;
     this.taskToDeleteId = null;
     this.activeListId = localStorage.getItem('todo_zen_active_list');
+    this.sortBy = localStorage.getItem(STORAGE_KEYS.SORT_BY) || 'creation-date-desc';
   }
 
   /**
@@ -40,10 +43,31 @@ export class TaskManager {
     }
 
     // 2. Ordenar
+    const priorityMap = { low: 0, medium: 1, high: 2 };
+
     tasks.sort((a, b) => {
+      // Manter as tarefas concluídas no final, independentemente da ordenação
       if (a.completed !== b.completed) return a.completed ? 1 : -1;
+
+      // Manter as tarefas favoritadas no topo (exceto as concluídas)
       if (a.favorited !== b.favorited) return a.favorited ? -1 : 1;
-      return b.createdAt - a.createdAt;
+
+      switch (this.sortBy) {
+        case 'creation-date-asc':
+          return a.createdAt - b.createdAt;
+        case 'due-date-asc':
+          // Tarefas sem data de vencimento vão para o final
+          if (!a.dueDate) return 1;
+          if (!b.dueDate) return -1;
+          return new Date(a.dueDate) - new Date(b.dueDate);
+        case 'priority-desc':
+          return (priorityMap[b.priority] || 0) - (priorityMap[a.priority] || 0);
+        case 'priority-asc':
+          return (priorityMap[a.priority] || 0) - (priorityMap[b.priority] || 0);
+        case 'creation-date-desc':
+        default:
+          return b.createdAt - a.createdAt;
+      }
     });
 
     // 3. Renderizar
@@ -189,5 +213,13 @@ export class TaskManager {
   setActiveList(listId) {
     this.activeListId = listId;
     localStorage.setItem('todo_zen_active_list', listId);
+  }
+
+  /**
+   * Define a preferência de ordenação
+   */
+  setSortBy(value) {
+    this.sortBy = value;
+    localStorage.setItem(STORAGE_KEYS.SORT_BY, value);
   }
 }

@@ -3,7 +3,8 @@ export const STORAGE_KEYS = {
   TASKS: 'todo_zen_tasks',
   TAGS: 'todo_zen_tags',
   LISTS: 'todo_zen_lists',
-  ACTIVE_LIST: 'todo_zen_active_list'
+  ACTIVE_LIST: 'todo_zen_active_list',
+  SORT_BY: 'todo_zen_sort_by'
 };
 
 export const PREDEFINED_TAG_COLORS = [
