@@ -282,15 +282,13 @@ body {
 }
 
 .list-header {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
   align-items: center;
   margin-bottom: 1rem;
 }
 
 .sort-container {
-  display: flex;
-  align-items: center;
+  text-align: right;
   gap: 8px;
 }
 
