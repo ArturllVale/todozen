@@ -1,103 +1,73 @@
-# TODO Zen
+# ✨ TODO Zen - Um Gerenciador de Tarefas Moderno
 
-Um aplicativo de gerenciamento de tarefas moderno e elegante, desenvolvido com HTML, CSS e JavaScript vanilla.
+**TODO Zen** é um aplicativo de gerenciamento de tarefas elegante e poderoso, construído com HTML, CSS e JavaScript puro. Ele foi projetado para ser intuitivo, rápido e visualmente agradável, ajudando você a organizar seu dia a dia com mais clareza e tranquilidade.
 
-## 📁 Estrutura do Projeto
+![placeholder](https://user-images.githubusercontent.com/1162569/180210212-0b73c434-f85a-446c-a8a2-a764d7c07b7b.png)
+*(Uma captura de tela da aplicação será inserida aqui)*
 
-```
-todozen/
-├── assets/          # Ícones e imagens
-├── css/            # Arquivos de estilo
-│   └── style.css
-├── js/             # Scripts JavaScript
-│   └── script.js
-├── index.html      # Página principal
-├── manifest.json   # Manifesto PWA
-├── sw.js          # Service Worker
-└── README.md      # Documentação
-```
+---
 
-## ✨ Funcionalidades
+## 🌟 Funcionalidades Principais
 
-### Principais
-- ✅ **Adicionar tarefas** com título e descrição
-- 🏷️ **Sistema de tags** com cores personalizáveis
-- 🔍 **Busca** por título e descrição
-- ⭐ **Favoritar** tarefas importantes
-- 📦 **Arquivar** tarefas concluídas
-- 🌙 **Modo escuro/claro**
-- 📱 **PWA** - Instalável como app
-- ⏰ **Datas e Lembretes**
-  - Defina datas de vencimento
-  - Escolha tempo de notificação (5-60 minutos)
-  - Notificações precisas antes do vencimento
-- 🔄 **Tarefas Recorrentes**
-  - Opções: diária, semanal, mensal
-  - Visualização clara do tipo de recorrência
-- 🎯 **Prioridades**
-  - Níveis: baixa, média, alta
-  - Indicadores visuais por cores
-- ⌨️ **Atalhos de Teclado**
-  - N: Nova tarefa
-  - F: Busca
-  - ESC: Fechar diálogos
+O TODO Zen vem com um conjunto completo de funcionalidades para uma gestão de tarefas eficaz.
 
-### Melhorias Implementadas
-1. **Estrutura organizada** - Pastas separadas para CSS, JS e assets
-2. **Título e descrição** - Tarefas agora têm título e descrição opcional
-3. **Criação rápida de tags** - Crie tags diretamente ao adicionar tarefas
-4. **Faixa colorida lateral** - Visual elegante baseado na cor da primeira tag
-5. **Correção de bugs** - Tarefas não desaparecem mais ao adicionar novas
-6. **Filtro por clique** - Clique em uma tag para filtrar por ela
+### ✅ Gestão de Tarefas
+- **Adicionar e Editar Tarefas:** Crie tarefas com títulos e descrições detalhadas usando um editor de texto simples.
+- **Visualização de Detalhes:** Clique em uma tarefa para abrir um pop-up com todas as suas informações, sem a necessidade de entrar no modo de edição.
+- **Prioridades Visuais:** Defina a prioridade de cada tarefa (Alta, Média, Baixa) com indicadores coloridos e textuais que estão sempre visíveis.
+- **Favoritos e Concluídos:** Marque tarefas como favoritas para destacá-las ou como concluídas para movê-las para o final da lista.
+- **Arquivamento:** Arquive tarefas que você não precisa ver no momento, mantendo sua lista limpa e focada.
 
-## 🎨 Sistema de Tags
+### 🗂️ Organização e Filtros
+- **Múltiplas Listas:** Organize suas tarefas em diferentes listas (ex: "Trabalho", "Pessoal", "Estudos").
+- **Sistema de Tags:** Crie tags com cores personalizadas para categorizar suas tarefas. Adicione tags ao criar ou editar uma tarefa.
+- **Filtro por Tags:** Clique em qualquer tag para filtrar instantaneamente a lista de tarefas.
+- **Busca Rápida:** Encontre tarefas rapidamente com a busca por título e descrição.
+- **Ordenação Flexível:** Ordene suas tarefas por data de criação (mais recentes/antigas), data de vencimento ou prioridade (alta/baixa).
 
-- **16 cores predefinidas** para escolher
-- **Criação rápida** durante a adição de tarefas
-- **Filtros visuais** com chips removíveis
-- **Faixa lateral colorida** nas tarefas baseada na primeira tag
+### ⏰ Agendamento e Notificações
+- **Datas e Horas de Vencimento:** Defina prazos específicos para suas tarefas.
+- **Tarefas Recorrentes:** Configure tarefas para se repetirem diariamente, semanalmente ou mensalmente.
+- **Lembretes:** Peça para ser notificado em um intervalo de tempo antes do vencimento da tarefa (de 5 a 60 minutos).
+- **Visualização em Calendário:** Visualize todas as suas tarefas com datas de vencimento em um prático calendário mensal.
+
+### 💾 Gestão de Dados
+- **Armazenamento Local:** Todos os seus dados são salvos de forma segura no `localStorage` do seu navegador.
+- **Exportar e Importar:** Faça backup de suas tarefas exportando-as como um arquivo JSON. Você pode exportar a lista atual ou todas as listas. Importe seus dados a qualquer momento.
+- **Limpeza de Dados:** Opção para limpar todos os dados do aplicativo com segurança.
+
+### 🚀 Extras
+- **Modo Escuro e Claro:** Alterne entre os temas para melhor conforto visual.
+- **PWA (Progressive Web App):** Instale o TODO Zen como um aplicativo nativo no seu desktop ou celular.
+- **Atalhos de Teclado:** Use `N` para criar uma nova tarefa, `F` para focar na busca e `ESC` para fechar diálogos.
+- **Design Responsivo:** A aplicação funciona perfeitamente em telas de todos os tamanhos.
+
+---
 
 ## 🚀 Como Usar
 
-1. Abra o `index.html` no navegador
-2. Clique em "Adicionar Tarefa" (ou pressione N) para criar uma nova tarefa
-3. Preencha:
-   - Título e descrição (opcional)
-   - Data de vencimento e tempo de notificação
-   - Prioridade (baixa, média, alta)
-   - Recorrência (diária, semanal, mensal)
-   - Selecione/crie tags
-4. Use a busca (atalho F) para encontrar tarefas específicas
-5. Clique em tags para filtrar tarefas
-6. Gerencie suas tags através do menu
-7. Use ESC para fechar diálogos rapidamente
+1. **Abra o `index.html`** no seu navegador de preferência.
+2. **Crie sua primeira tarefa** clicando em "Adicionar Tarefa" ou pressionando a tecla `N`.
+3. **Preencha os detalhes:**
+   - Título e Descrição.
+   - Data de Vencimento e Lembrete.
+   - Prioridade e Recorrência.
+   - Crie ou selecione Tags.
+4. **Organize sua lista:**
+   - Use a **Busca** para encontrar tarefas.
+   - **Ordene** a lista como preferir.
+   - **Filtre** por tags clicando nelas.
+5. **Gerencie suas listas e tags** através do menu lateral e do menu de configurações.
 
-## 💾 Armazenamento
+---
 
-Todos os dados são salvos localmente no navegador usando localStorage. Você pode:
-- **Exportar** seus dados em formato JSON
-  - Exportar todas as listas
-  - Exportar apenas a lista atual
-- **Importar** dados de backup
-  - Importar como nova lista
-  - Mesclar com dados existentes
-- **Limpar** todos os dados se necessário
+## 🔧 Tecnologias Utilizadas
 
-## 🔧 Tecnologias
-
-- **HTML5** - Estrutura semântica
-- **CSS3** - Estilos modernos com variáveis CSS
-- **JavaScript ES6+** - Funcionalidades interativas
-- **PWA** - Service Worker para funcionamento offline
-- **LocalStorage** - Persistência de dados local
-
-## 📱 PWA (Progressive Web App)
-
-O TODO Zen pode ser instalado como um aplicativo nativo:
-1. Abra no navegador
-2. Clique no menu (⋮)
-3. Selecione "Instalar App"
-4. Confirme a instalação
+- **HTML5:** Para a estrutura semântica da aplicação.
+- **CSS3:** Para estilos modernos, com variáveis CSS para fácil customização e temas.
+- **JavaScript (ES6+):** Para toda a interatividade e lógica da aplicação, sem o uso de frameworks.
+- **Service Worker:** Para as funcionalidades offline e PWA.
+- **LocalStorage API:** Para a persistência de dados no navegador.
 
 ---
 

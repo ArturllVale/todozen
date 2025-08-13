@@ -2,7 +2,14 @@
 import { STORAGE_KEYS } from './constants.js';
 
 export const storage = {
-  getFromStorage: (key) => JSON.parse(localStorage.getItem(key) || '[]'),
+  getFromStorage: (key) => {
+    try {
+      return JSON.parse(localStorage.getItem(key) || '[]');
+    } catch (e) {
+      console.error(`Error parsing localStorage key "${key}":`, e);
+      return []; // Retorna um array vazio em caso de erro para evitar que a aplicação quebre
+    }
+  },
   saveToStorage: (key, data) => localStorage.setItem(key, JSON.stringify(data)),
 
   getTasks: () => storage.getFromStorage(STORAGE_KEYS.TASKS),

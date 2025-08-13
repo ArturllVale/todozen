@@ -175,6 +175,16 @@
       <main class="container">
         <div id="list-header" class="list-header">
           <h2 id="list-title-display"></h2>
+          <div id="sort-container" class="sort-container">
+            <label for="sort-tasks-select" class="sort-label">Ordenar por:</label>
+            <select id="sort-tasks-select">
+              <option value="creation-date-desc">Mais Recentes</option>
+              <option value="creation-date-asc">Mais Antigas</option>
+              <option value="due-date-asc">Data de Vencimento</option>
+              <option value="priority-desc">Prioridade (Alta-Baixa)</option>
+              <option value="priority-asc">Prioridade (Baixa-Alta)</option>
+            </select>
+          </div>
         </div>
         <div id="tags-filter-container" class="tags-filter-container hidden">
           <span class="filter-label">Filtrar por tags:</span>
@@ -389,6 +399,30 @@
   </div>
 
   <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+  <div id="view-task-dialog" class="dialog hidden">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2 id="view-task-title"></h2>
+        <button id="close-view-task-dialog-btn" class="close-button">&times;</button>
+      </div>
+      <div class="dialog-body">
+        <div id="view-task-description" class="view-task-section">
+          <!-- Full description will be here -->
+        </div>
+        <div id="view-task-meta" class="view-task-section">
+          <!-- Meta info will be here -->
+        </div>
+        <div id="view-task-tags" class="view-task-section">
+          <h4>Tags</h4>
+          <div id="view-task-tags-container"></div>
+        </div>
+      </div>
+      <div class="dialog-footer">
+        <button type="button" id="view-task-edit-btn" class="button primary">Editar Tarefa</button>
+      </div>
+    </div>
+  </div>
 
   <div id="notification-container" class="notification-container"></div>
   </div>

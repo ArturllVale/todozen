@@ -41,6 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Busca de tarefas
   elements.searchInput.addEventListener('input', () => taskManager.renderTasks());
 
+  // Ordenação de tarefas
+  elements.sortTasksSelect.addEventListener('change', (e) => {
+    taskManager.setSortBy(e.target.value);
+    taskManager.renderTasks();
+  });
+
   // Botões de adicionar tarefa
   elements.addTaskBtn.addEventListener('click', () => dialogManager.openTaskDialog('add'));
   elements.emptyStateAddBtn.addEventListener('click', () => dialogManager.openTaskDialog('add'));
@@ -101,6 +107,14 @@ document.addEventListener('DOMContentLoaded', () => {
     utils.showNotification(id ? 'Tarefa atualizada!' : 'Tarefa adicionada!', 'success');
   });
 
+  // Diálogo de visualização de tarefa
+  elements.closeViewTaskDialogBtn.addEventListener('click', () => dialogManager.closeViewTaskDialog());
+  elements.viewTaskEditBtn.addEventListener('click', (e) => {
+    const taskId = e.target.dataset.taskId;
+    dialogManager.closeViewTaskDialog();
+    dialogManager.openTaskDialog('edit', taskId);
+  });
+
   // Event listeners para ações das tarefas
   elements.tasksListContainer.addEventListener('click', (e) => {
     const target = e.target;
@@ -137,6 +151,10 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (target.closest('.delete-btn')) {
       taskManager.taskToDeleteId = taskId;
       elements.confirmDialog.classList.remove('hidden');
+      return;
+    } else if (target.closest('.task-content')) {
+      // Abre o diálogo de visualização se clicar no conteúdo da tarefa
+      dialogManager.openViewTaskDialog(taskId);
       return;
     } else {
       return;
@@ -275,6 +293,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Renderiza as listas primeiro
     listManager.renderLists();
     
+    // Define o valor inicial do seletor de ordenação
+    elements.sortTasksSelect.value = taskManager.sortBy;
+
     // Renderiza as tarefas
     taskManager.renderTasks();
     
