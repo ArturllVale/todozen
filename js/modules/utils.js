@@ -34,6 +34,18 @@ export const utils = {
   },
 
   /**
+   * Obtém o texto de prioridade
+   */
+  getPriorityText: (priority) => {
+    const priorityMap = {
+      low: 'Baixa',
+      medium: 'Média',
+      high: 'Alta'
+    };
+    return priorityMap[priority] || '';
+  },
+
+  /**
    * Exibe uma notificação
    */
   showNotification: (message, type = 'success') => {
@@ -64,5 +76,15 @@ export const utils = {
     if (savedTheme) {
       document.documentElement.setAttribute('data-theme', savedTheme);
     }
+  },
+
+  /**
+   * Trunca um texto se for maior que o tamanho máximo
+   */
+  truncateText: (text, maxLength) => {
+    if (text.length <= maxLength) {
+      return text;
+    }
+    return text.slice(0, maxLength) + '...';
   }
 };

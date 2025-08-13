@@ -97,5 +97,14 @@ export const elements = {
   closeExportDialogBtn: document.getElementById('close-export-dialog-btn'),
   exportCurrentListBtn: document.getElementById('export-current-list-btn'),
   exportAllListsBtn: document.getElementById('export-all-lists-btn'),
-  cancelExportBtn: document.getElementById('cancel-export-btn')
+  cancelExportBtn: document.getElementById('cancel-export-btn'),
+
+  // Diálogo de visualização de tarefa
+  viewTaskDialog: document.getElementById('view-task-dialog'),
+  closeViewTaskDialogBtn: document.getElementById('close-view-task-dialog-btn'),
+  viewTaskTitle: document.getElementById('view-task-title'),
+  viewTaskDescription: document.getElementById('view-task-description'),
+  viewTaskMeta: document.getElementById('view-task-meta'),
+  viewTaskTagsContainer: document.getElementById('view-task-tags-container'),
+  viewTaskEditBtn: document.getElementById('view-task-edit-btn')
 };

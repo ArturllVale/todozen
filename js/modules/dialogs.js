@@ -124,4 +124,66 @@ export class DialogManager {
   closeExportDialog() {
     elements.exportDialog.classList.add('hidden');
   }
+
+  /**
+   * Abre o diálogo de visualização de tarefa
+   */
+  openViewTaskDialog(taskId) {
+    const task = storage.getTasks().find(t => t.id === taskId);
+    if (!task) return;
+
+    elements.viewTaskTitle.textContent = task.title;
+    elements.viewTaskDescription.textContent = task.description || 'Nenhuma descrição fornecida.';
+
+    // Construir meta info
+    elements.viewTaskMeta.innerHTML = '';
+    if (task.priority) {
+      elements.viewTaskMeta.innerHTML += `
+        <div class="task-priority-indicator priority-${task.priority}">
+          Prioridade: ${utils.getPriorityText(task.priority)}
+        </div>`;
+    }
+    if (task.dueDate) {
+      elements.viewTaskMeta.innerHTML += `
+        <div class="task-due-date ${utils.isOverdue(task.dueDate) ? 'overdue' : ''}">
+          Vence em: ${utils.formatDueDate(task.dueDate)}
+        </div>`;
+    }
+    if (task.recurrence && task.recurrence !== 'none') {
+      elements.viewTaskMeta.innerHTML += `
+        <div class="task-recurrence">
+          Recorrência: ${utils.getRecurrenceText(task.recurrence)}
+        </div>`;
+    }
+
+    // Construir tags
+    elements.viewTaskTagsContainer.innerHTML = '';
+    if (task.tags && task.tags.length > 0) {
+      const allTags = storage.getTags();
+      task.tags.forEach(tagId => {
+        const tag = allTags.find(t => t.id === tagId);
+        if (tag) {
+          const tagEl = document.createElement('span');
+          tagEl.className = 'tag';
+          tagEl.textContent = tag.name;
+          tagEl.style.backgroundColor = tag.color;
+          elements.viewTaskTagsContainer.appendChild(tagEl);
+        }
+      });
+    } else {
+      elements.viewTaskTagsContainer.innerHTML = '<p>Nenhuma tag associada.</p>';
+    }
+
+    // Armazenar o ID da tarefa para o botão de editar
+    elements.viewTaskEditBtn.dataset.taskId = taskId;
+
+    elements.viewTaskDialog.classList.remove('hidden');
+  }
+
+  /**
+   * Fecha o diálogo de visualização de tarefa
+   */
+  closeViewTaskDialog() {
+    elements.viewTaskDialog.classList.add('hidden');
+  }
 }

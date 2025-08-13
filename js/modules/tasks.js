@@ -92,9 +92,6 @@ export class TaskManager {
     taskEl.classList.toggle('completed', task.completed);
     taskEl.classList.toggle('favorited', task.favorited);
     taskEl.classList.toggle('archived', task.archived);
-    if (task.priority) {
-      taskEl.classList.add(`priority-${task.priority}`);
-    }
     taskEl.dataset.taskId = task.id;
 
     const tags = storage.getTags();
@@ -113,30 +110,50 @@ export class TaskManager {
       return tag ? `<span class="tag clickable" style="background-color: ${tag.color};" data-tag-id="${tag.id}">${tag.name}</span>` : '';
     }).join('');
 
-    const descriptionHtml = task.description ? `<div class="task-description">${task.description}</div>` : '';
+    const descriptionHtml = task.description ? `<div class="task-description">${utils.truncateText(task.description, 100)}</div>` : '';
+
+    const priorityHtml = task.priority ? `
+      <div class="task-priority-indicator priority-${task.priority}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+        ${utils.getPriorityText(task.priority)}
+      </div>
+    ` : '';
+
+    const dueDateHtml = task.dueDate ? `
+      <div class="task-due-date ${utils.isOverdue(task.dueDate) ? 'overdue' : ''}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        ${utils.formatDueDate(task.dueDate)}
+      </div>
+    ` : '';
+
+    const recurrenceHtml = task.recurrence && task.recurrence !== 'none' ? `
+      <div class="task-recurrence">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
+        </svg>
+        ${utils.getRecurrenceText(task.recurrence)}
+      </div>
+    ` : '';
+
+    const metaInfoHtml = priorityHtml || dueDateHtml || recurrenceHtml ? `
+      <div class="task-meta-info">
+        ${priorityHtml}
+        ${dueDateHtml}
+        ${recurrenceHtml}
+      </div>
+    ` : '';
 
     taskEl.innerHTML = `
       <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''}>
       <div class="task-content">
         <div class="task-title-text">${task.title}</div>
         ${descriptionHtml}
-        ${task.dueDate ? `
-          <div class="task-due-date ${utils.isOverdue(task.dueDate) ? 'overdue' : ''}">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            ${utils.formatDueDate(task.dueDate)}
-          </div>
-        ` : ''}
-        ${task.recurrence && task.recurrence !== 'none' ? `
-          <div class="task-recurrence">
-            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
-            </svg>
-            ${utils.getRecurrenceText(task.recurrence)}
-          </div>
-        ` : ''}
+        ${metaInfoHtml}
         <div class="task-tags">${taskTagsHtml}</div>
       </div>
       <div class="task-actions">
