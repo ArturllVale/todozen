@@ -739,9 +739,13 @@ body {
   z-index: 30;
 }
 
+#dialog-title {
+  margin-top: 0.4rem;
+}
+
 .dialog-content {
   background-color: var(--card-background);
-  padding: 1.6rem;
+  padding: 1rem;
   border-radius: 8px;
   width: 90%;
   max-width: 420px;
@@ -749,6 +753,7 @@ body {
   overflow-y: auto; /* Adiciona rolagem vertical quando o conteúdo excede a altura */
   display: flex;
   flex-direction: column;
+  scrollbar-width: none;
 }
 
 /* Diálogo de Confirmação */
