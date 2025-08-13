@@ -463,29 +463,47 @@ body {
   transition: background-color 0.3s ease;
 }
 
-.task-item.priority-low::before {
+.task-item.has-tag::before {
+  background-color: var(--tag-color, var(--primary-color));
+}
+
+.task-meta-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--archived-text);
+}
+
+.task-due-date, .task-recurrence, .task-priority-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.task-priority-indicator {
+  padding: 0.1rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--pure-white);
+}
+
+.task-priority-indicator.priority-low {
   background-color: var(--priority-low);
 }
-
-.task-item.priority-medium::before {
+.task-priority-indicator.priority-medium {
   background-color: var(--priority-medium);
 }
-
-.task-item.priority-high::before {
+.task-priority-indicator.priority-high {
   background-color: var(--priority-high);
 }
 
-.task-item.has-tag::before {
-  background-color: var(--tag-color, var(--primary-color)) !important;
-}
-
-.task-due-date {
-  font-size: 0.8rem;
-  color: var(--archived-text);
-  margin-top: 0.25rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.task-due-date.overdue {
+  color: var(--accent-color);
+  font-weight: 500;
 }
 
 .task-due-date.overdue {
@@ -953,6 +971,48 @@ dialog.confirmation-dialog::backdrop {
   font-size: 0.8rem;
   cursor: pointer;
   font-weight: bold;
+}
+
+/* View Task Dialog */
+#view-task-dialog .dialog-content {
+  max-width: 500px;
+}
+
+.view-task-section {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+}
+
+.view-task-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+#view-task-description {
+  line-height: 1.6;
+  white-space: pre-wrap; /* Preserve line breaks from textarea */
+  word-wrap: break-word;
+}
+
+#view-task-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+#view-task-tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+#view-task-dialog h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
 }
 
 /* Diálogo de Gerenciar Tags */
