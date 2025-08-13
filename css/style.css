@@ -471,6 +471,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.4rem;
+  font-size: 0.9rem;
 }
 
 .task-priority-indicator {
@@ -495,11 +496,7 @@ body {
 .task-due-date.overdue {
   color: var(--accent-color);
   font-weight: 500;
-}
-
-.task-due-date.overdue {
-  color: var(--accent-color);
-  font-weight: 500;
+  font-size: 0.9rem;
 }
 
 .task-recurrence {
