@@ -140,8 +140,11 @@ export class TaskManager {
       </div>
     ` : '';
 
-    const metaInfoHtml = priorityHtml || dueDateHtml || recurrenceHtml ? `
+    const metaInfoHtml = priorityHtml || dueDateHtml || recurrenceHtml || taskTagsHtml ? `
       <div class="task-meta-info">
+        ${priorityHtml}
+        ${dueDateHtml}
+        ${recurrenceHtml}
       </div>
     ` : '';
 
@@ -151,12 +154,7 @@ export class TaskManager {
         <div class="task-title-text">${task.title}</div>
         ${descriptionHtml}
         ${metaInfoHtml}
-        <div class="task-tags">
-        ${priorityHtml}
-        ${taskTagsHtml}
-        ${dueDateHtml}
-        ${recurrenceHtml}
-        </div>
+        <div class="task-tags">${taskTagsHtml}</div>
       </div>
       <div class="task-actions">
         <button class="button icon-button favorite-btn ${task.favorited ? 'active' : ''}" title="Favoritar">
