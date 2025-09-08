@@ -47,6 +47,15 @@ body {
   background-color: var(--background-color);
   color: var(--text-color);
   transition: background-color 0.3s, color 0.3s;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 main.container {
@@ -57,6 +66,11 @@ main.container {
   flex-grow: 1;
   overflow-y: auto;
   min-height: 0;
+  scrollbar-width: none; /* Para Firefox */
+}
+
+main.container::-webkit-scrollbar {
+  display: none; /* Para Chrome, Safari e Edge */
 }
 
 @media (max-width: 500px) {
@@ -73,7 +87,7 @@ main.container {
 
 .app-body {
   display: flex;
-  height: calc(100vh - 60px); /* Altura total menos o header */
+  flex-grow: 1;
   position: relative;
 }
 
