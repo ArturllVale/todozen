@@ -89,7 +89,6 @@ main.container::-webkit-scrollbar {
   display: flex;
   flex-grow: 1;
   position: relative;
-  overflow: hidden;
 }
 
 /* Estilos do Calendário */
